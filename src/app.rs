@@ -116,6 +116,9 @@ impl App {
         };
         self.dep_tbl_state.select(Some(i));
     }
+    pub fn dep_tbl_select_none(&mut self) {
+        self.dep_tbl_state.select(None);
+    }
     pub fn dep_tbl_select_first(&mut self) {
         self.dep_tbl_state.select(Some(0));
     }

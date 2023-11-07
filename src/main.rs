@@ -39,7 +39,8 @@ async fn main() -> Result<()> {
     // TODO read fav station from a config file
     app.scroll_state.select(Some(0));
     app.select_station().await;
-    app.dep_tbl_state.select(Some(0));
+    // current behavior: no highlighting until user starts scrolling, selecting new destination sets highlight to none
+    // app.dep_tbl_state.select(Some(0));
 
     let mut tui = Tui::new(terminal, events);
     tui.enter()?;

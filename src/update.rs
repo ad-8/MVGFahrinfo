@@ -47,7 +47,7 @@ pub async fn update(app: &mut App, key_event: KeyEvent) {
             }
             KeyCode::Enter => {
                 app.select_station().await;
-                app.dep_tbl_select_first();
+                app.dep_tbl_select_none();
                 app.should_redraw = true;
             }
             KeyCode::Tab => {
@@ -66,7 +66,7 @@ pub async fn update(app: &mut App, key_event: KeyEvent) {
         AppMode::Search => match key_event.code {
             KeyCode::Enter => {
                 app.select_searched_station().await;
-                app.dep_tbl_select_first();
+                app.dep_tbl_select_none();
                 app.should_redraw = true;
             }
             KeyCode::Char(to_insert) => {

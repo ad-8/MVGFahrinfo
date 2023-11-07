@@ -58,6 +58,20 @@ pub struct DepartureInfo {
     pub stop_point_global_id: String, //"de:09162:6:52:52"
 }
 
+impl DepartureInfo {
+    pub fn is_favorite(&self) -> bool {
+        // TODO read from config (or via TUI user input)
+        let favorites = vec!["messestadt".to_string(), "FREISING".to_string(), "Tutz".to_string()];
+
+        for fav in favorites {
+            if self.destination.to_lowercase().contains(&fav.to_lowercase()) {
+                return true;
+            }
+        }
+        false
+    }
+}
+
 pub async fn get_departures(id: &str) -> Result<Vec<DepartureInfo>> {
     let full_url = format!("https://www.mvg.de/api/fib/v2/departure?globalId={}", id);
 
