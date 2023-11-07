@@ -1,3 +1,4 @@
+use chrono::{Local, DateTime};
 use ratatui::widgets::{ListState, TableState};
 
 use crate::api;
@@ -22,7 +23,9 @@ pub struct App {
     pub departures: Vec<api::DepartureInfo>,
     pub should_redraw: bool,
     pub status: String,
+    pub time_of_last_refresh: DateTime<Local>,
     pub last_refreshed: String,
+    pub seconds_since_last_refresh: i64,
     //scroll related
     pub scroll_state: ListState,
     pub dep_tbl_state: TableState,
@@ -44,7 +47,9 @@ impl App {
             departures: vec![],
             should_redraw: true,
             status: "Loading stations...".to_string(),
+            time_of_last_refresh: Default::default(),
             last_refreshed: " ".to_string(),
+            seconds_since_last_refresh: 0,
             scroll_state: ListState::default(),
             dep_tbl_state: Default::default(),
             app_mode: AppMode::Normal,
@@ -148,7 +153,20 @@ impl App {
 
     fn update_last_refreshed(&mut self) {
         let time_now = chrono::Local::now();
+        self.time_of_last_refresh = time_now;
         self.last_refreshed = format!("{}", time_now.format("%H:%M:%S"));
+    }
+
+    pub fn update_seconds_since_last_refresh(&mut self, n: i64) {
+        let now = chrono::Local::now();
+        let since = now.signed_duration_since(self.time_of_last_refresh);
+        let seconds = since.num_seconds();
+        // if we would redraw constantly, the app uses ~2-3% cpu all the time on my machine,
+        // so we redraw every n seconds and after each refresh (via Event::Tick (0 % n = 0))
+        if seconds % n == 0 {
+            self.seconds_since_last_refresh = seconds;
+            self.should_redraw = true;
+        }
     }
 
     pub async fn select_station(&mut self) {

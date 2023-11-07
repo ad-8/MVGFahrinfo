@@ -52,7 +52,9 @@ async fn main() -> Result<()> {
         }
 
         match tui.events.next()? {
-            Event::Tick => {} //every 250ms we get a tick event, we ignore it
+            Event::Tick => {
+                app.update_seconds_since_last_refresh(5);
+            } //every 250ms we get a tick event
             Event::Key(key_event) => update(&mut app, key_event).await,
         };
     }
