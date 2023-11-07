@@ -3,6 +3,7 @@ use anyhow::Result; //to avoid writing the error type <Box dyn Error> everywhere
 
 pub mod api;
 pub mod app;
+pub mod config;
 pub mod components;
 pub mod constants;
 pub mod event;
@@ -19,7 +20,7 @@ use update::update;
 
 use ratatui::prelude::{CrosstermBackend, Terminal};
 
-use crate::update::initiate_auto_refresh;
+use crate::{update::initiate_auto_refresh, config::Config};
 
 pub type Frame<'a> = ratatui::Frame<'a, CrosstermBackend<std::io::Stderr>>; // alias for the frame type
 
@@ -36,8 +37,9 @@ async fn main() -> Result<()> {
     let mut app = App::new().await;
 
     initiate_auto_refresh(sender);
-    // TODO read fav station from a config file
-    app.scroll_state.select(Some(0));
+
+    let config = Config::parse();
+    app.scroll_state.select(config.fav_station_idx);
     app.select_station().await;
     // current behavior: no highlighting until user starts scrolling, selecting new destination sets highlight to none
     // app.dep_tbl_state.select(Some(0));

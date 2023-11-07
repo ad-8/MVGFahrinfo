@@ -3,6 +3,8 @@ use std::fs::File;
 // #[allow(unused, dead_code, unused_)]
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
+
+use crate::config::Config;
 pub async fn fetch_station_ids() -> Result<Vec<String>> {
     let full_url = "https://www.mvg.de/.rest/zdm/mvgStationGlobalIds";
 
@@ -60,8 +62,12 @@ pub struct DepartureInfo {
 
 impl DepartureInfo {
     pub fn is_favorite(&self) -> bool {
-        // TODO read from config (or via TUI user input)
-        let favorites = vec!["messestadt".to_string(), "FREISING".to_string(), "Tutz".to_string()];
+        // TODO pass config from main
+        let config = Config::parse();
+        let favorites = match config.fav_directions {
+            Some(f) => f,
+            None => vec![],
+        };
 
         for fav in favorites {
             if self.destination.to_lowercase().contains(&fav.to_lowercase()) {

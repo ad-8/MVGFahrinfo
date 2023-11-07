@@ -61,7 +61,7 @@ pub async fn update(app: &mut App, key_event: KeyEvent) {
             }
             _ => {
                 // todo: pass the key event?
-            }
+            }   
         },
         AppMode::Search => match key_event.code {
             KeyCode::Enter => {
