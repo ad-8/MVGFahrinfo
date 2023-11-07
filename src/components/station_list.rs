@@ -106,7 +106,7 @@ pub fn display_departures_table(departures: &[api::DepartureInfo]) -> Table {
 
     let t = Table::new(rows)
         .header(header)
-        // .highlight_style(Style::default().fg(Color::Yellow))
+        .highlight_style(Style::default().fg(Color::Yellow))
         // .highlight_symbol(">> ")
         .style(Style::default().fg(Color::White))
         .widths(&[

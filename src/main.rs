@@ -36,6 +36,7 @@ async fn main() -> Result<()> {
     let mut app = App::new().await;
 
     initiate_auto_refresh(sender);
+    app.dep_tbl_state.select(Some(0));
 
     let mut tui = Tui::new(terminal, events);
     tui.enter()?;

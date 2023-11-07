@@ -141,7 +141,10 @@ pub fn render(app: &mut App, f: &mut Frame) {
     }
 }
 
-fn draw_departures(f: &mut Frame<'_>, app: &App) {
+fn draw_departures(f: &mut Frame<'_>, app: &mut App) {
+    
+
+
     let popup_title = match &app.selected_station {
         Some(station) => format!(" {} ", station.name),
         None => " No station selected ".to_string(),
@@ -158,5 +161,5 @@ fn draw_departures(f: &mut Frame<'_>, app: &App) {
 
     let area = static_widgets::centered_rect(69, 50, f.size());
     f.render_widget(Clear, area); //this clears out the background
-    f.render_widget(table, area);
+    f.render_stateful_widget(table, area, &mut app.dep_tbl_state);
 }

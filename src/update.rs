@@ -29,8 +29,25 @@ pub async fn update(app: &mut App, key_event: KeyEvent) {
                 app.decrement_station();
                 app.should_redraw = true;
             }
+            KeyCode::Char('j') => {
+                app.dep_tbl_next();
+                app.should_redraw = true;
+            }
+            KeyCode::Char('k') => {
+                app.dep_tbl_prev();
+                app.should_redraw = true;
+            }
+            KeyCode::Char('g') => {
+                app.dep_tbl_select_first();
+                app.should_redraw = true;
+            }
+            KeyCode::Char('G') => {
+                app.dep_tbl_select_last();
+                app.should_redraw = true;
+            }
             KeyCode::Enter => {
                 app.select_station().await;
+                app.dep_tbl_select_first();
                 app.should_redraw = true;
             }
             KeyCode::Tab => {
@@ -49,6 +66,7 @@ pub async fn update(app: &mut App, key_event: KeyEvent) {
         AppMode::Search => match key_event.code {
             KeyCode::Enter => {
                 app.select_searched_station().await;
+                app.dep_tbl_select_first();
                 app.should_redraw = true;
             }
             KeyCode::Char(to_insert) => {

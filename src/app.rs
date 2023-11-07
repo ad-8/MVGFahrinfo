@@ -1,4 +1,4 @@
-use ratatui::widgets::ListState;
+use ratatui::widgets::{ListState, TableState};
 
 use crate::api;
 
@@ -25,6 +25,7 @@ pub struct App {
     pub last_refreshed: String,
     //scroll related
     pub scroll_state: ListState,
+    pub dep_tbl_state: TableState,
     //search related
     pub app_mode: AppMode,
     pub query: String,
@@ -45,6 +46,7 @@ impl App {
             status: "Loading stations...".to_string(),
             last_refreshed: " ".to_string(),
             scroll_state: ListState::default(),
+            dep_tbl_state: Default::default(),
             app_mode: AppMode::Normal,
             query: String::new(),
             cursor_position: 0,
@@ -82,6 +84,46 @@ impl App {
         };
         self.scroll_state.select(Some(i));
     }
+
+    pub fn dep_tbl_next(&mut self) {
+        let i = match self.dep_tbl_state.selected() {
+            Some(i) => {
+                if i >= self.departures.len() - 1 {
+                    0
+                } else {
+                    i + 1
+                }
+            }
+            None => 0,
+        };
+        self.dep_tbl_state.select(Some(i));
+    }
+    pub fn dep_tbl_prev(&mut self) {
+        let i = match self.dep_tbl_state.selected() {
+            Some(i) => {
+                if i == 0 {
+                    self.departures.len() - 1
+                } else {
+                    i - 1
+                }
+            }
+            None => 0,
+        };
+        self.dep_tbl_state.select(Some(i));
+    }
+    pub fn dep_tbl_select_first(&mut self) {
+        self.dep_tbl_state.select(Some(0));
+    }
+    pub fn dep_tbl_select_last(&mut self) {
+        let len = self.departures.len();
+        let last = if len > 1 {
+            len - 1
+        } else {
+            0
+        };
+        self.dep_tbl_state.select(Some(last));
+    }
+
     pub fn toggle_tabs(&mut self) {
         match self.selected_tab {
             AppTabs::HomeTab => self.selected_tab = AppTabs::StationTab,
