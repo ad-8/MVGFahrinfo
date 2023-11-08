@@ -1,7 +1,7 @@
-use chrono::{Local, DateTime};
+use chrono::{DateTime, Local};
 use ratatui::widgets::{ListState, TableState};
 
-use crate::api;
+use crate::{api::{self, DepartureInfo}, config::Config};
 
 #[derive(PartialEq)] // need this to do binary comparison
 pub enum AppTabs {
@@ -16,6 +16,7 @@ pub enum AppMode {
 }
 
 pub struct App {
+    pub config: Config,
     pub selected_tab: AppTabs,
     pub should_quit: bool,
     pub stations: Vec<api::Station>,
@@ -38,8 +39,9 @@ pub struct App {
 }
 
 impl App {
-    pub async fn new() -> Self {
+    pub async fn new(config: Config) -> Self {
         Self {
+            config: config,
             selected_tab: AppTabs::HomeTab,
             should_quit: false,
             stations: api::get_stations().await.unwrap_or_else(|_| vec![]),
@@ -124,11 +126,7 @@ impl App {
     }
     pub fn dep_tbl_select_last(&mut self) {
         let len = self.departures.len();
-        let last = if len > 1 {
-            len - 1
-        } else {
-            0
-        };
+        let last = if len > 1 { len - 1 } else { 0 };
         self.dep_tbl_state.select(Some(last));
     }
 
@@ -140,9 +138,20 @@ impl App {
     }
 
     pub async fn update_departures(&mut self) {
+
         if let Some(station) = &self.selected_station {
             self.departures = match api::get_departures(&station.id).await {
                 Ok(departures) => {
+                    let departures: Vec<DepartureInfo> =
+                        if let Some(transport_types) = self.config.transport.clone() {
+                            departures
+                                .iter()
+                                .filter(|d| transport_types.contains(&d.transport_type))
+                                .cloned()
+                                .collect()
+                        } else {
+                            departures
+                        };
                     self.update_last_refreshed();
                     departures
                 }

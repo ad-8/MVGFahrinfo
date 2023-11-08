@@ -81,7 +81,7 @@ fn get_product_icon_spans(products: &Vec<String>) -> Vec<Span> {
     spans
 }
 
-pub fn display_departures_table(departures: &[api::DepartureInfo]) -> Table {
+pub fn display_departures_table<'a>(departures: &'a [api::DepartureInfo], config: &'a Config) -> Table<'a> {
     let header_cells = ["Vehicle", "Direction", "Platform", "ETA"]
         .iter()
         .map(|h| Cell::from(*h).style(Style::default().fg(Color::Gray)));
@@ -94,15 +94,9 @@ pub fn display_departures_table(departures: &[api::DepartureInfo]) -> Table {
         .bottom_margin(1);
 
     let fav_color = Color::LightRed;
-    let config = Config::parse();//TODO pass from main
-    let departures: Vec<&DepartureInfo> = if let Some(transport_types) = config.transport {
-        departures.iter().filter(|d| transport_types.contains(&d.transport_type)).collect()
-    } else {
-        departures.iter().map(|d| d).collect() // DepartureInfo -> &DepartureInfo
-    };
 
     let rows = departures.iter().enumerate().map(|(index, item)| {
-        let cells = if item.is_favorite() {
+        let cells = if item.is_favorite(config) {
             vec![
                 Cell::from(get_vehicle_label(&item.label, &item.transport_type)),
                 Cell::from(format!("{}", item.destination)).style(Style::default().fg(fav_color)),

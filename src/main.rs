@@ -26,6 +26,7 @@ pub type Frame<'a> = ratatui::Frame<'a, CrosstermBackend<std::io::Stderr>>; // a
 
 #[tokio::main]
 async fn main() -> Result<()> {
+    let config = Config::parse(); // will exit here if the config file is invalid
     println!("fetching stations...");
 
     let backend = CrosstermBackend::new(std::io::stderr());
@@ -34,17 +35,16 @@ async fn main() -> Result<()> {
 
     let sender = events.sender.clone(); //we can clone it as we can have multiple senders for this channel
 
-    let mut app = App::new().await;
+    let mut app = App::new(config).await;
 
     initiate_auto_refresh(sender);
 
-    let config = Config::parse();
-    app.scroll_state.select(config.fav_station_idx);
+    app.scroll_state.select(app.config.fav_station);
     app.select_station().await;
     // current behavior: no highlighting until user starts scrolling, selecting new destination sets highlight to none
     // app.dep_tbl_state.select(Some(0));
-    let display_seconds = config.display_seconds.unwrap_or_default();
-    let refresh_rate = config.refresh_rate.unwrap_or(5) as i64;
+    let display_seconds = app.config.display_seconds.unwrap_or_default();
+    let refresh_rate = app.config.display_seconds_refresh_rate.unwrap_or(5) as i64;
 
     let mut tui = Tui::new(terminal, events);
     tui.enter()?;

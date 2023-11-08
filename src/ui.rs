@@ -67,11 +67,10 @@ pub fn render(app: &mut App, f: &mut Frame) {
     };
 
     //Status bar
-    let config = Config::parse(); // TODO pass config or add app.config field
 
     let app_mode_indicator: Vec<Span> = match app.app_mode {
         crate::app::AppMode::Normal => {
-            let last_refreshed = if config.display_seconds.unwrap_or_default() {
+            let last_refreshed = if app.config.display_seconds.unwrap_or_default() {
                 format!(
                     "Last refreshed: {} ({} sec ago)",
                     &app.last_refreshed, &app.seconds_since_last_refresh
@@ -164,7 +163,7 @@ fn draw_departures(f: &mut Frame<'_>, app: &mut App) {
         .style(Style::default());
 
     // let list = display_departures(&app.departures).block(block);
-    let table = display_departures_table(&app.departures).block(block);
+    let table = display_departures_table(&app.departures, &app.config).block(block);
 
     let area = static_widgets::centered_rect(69, 50, f.size());
     f.render_widget(Clear, area); //this clears out the background

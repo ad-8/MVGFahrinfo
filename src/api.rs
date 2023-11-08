@@ -61,9 +61,8 @@ pub struct DepartureInfo {
 }
 
 impl DepartureInfo {
-    pub fn is_favorite(&self) -> bool {
-        let config = Config::parse(); // TODO pass config from main 
-        let favorites = match config.fav_directions {
+    pub fn is_favorite(&self, config: &Config) -> bool {
+        let favorites = match config.fav_directions.clone() {
             Some(f) => f,
             None => vec![],
         };
