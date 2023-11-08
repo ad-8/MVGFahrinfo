@@ -4,6 +4,7 @@ const CONFIG_FILE: &str = "config.toml";
 
 #[derive(Debug, Deserialize)]
 pub struct Config {
+    pub app_refresh_rate: Option<usize>,
     /// index of a station in `stations.json` // TODO create file that lists all station names with index
     pub fav_station: Option<usize>,
     /// highlight departures to specified directions
@@ -32,10 +33,11 @@ impl Config {
                 c.unwrap()
             }
             Err(_) => Config {
+                app_refresh_rate: Some(60),
                 fav_station: None,
                 fav_directions: None,
                 display_seconds: None,
-                display_seconds_refresh_rate: None,
+                display_seconds_refresh_rate: Some(10),
                 transport: None,
             },
         }

@@ -107,10 +107,10 @@ pub async fn update(app: &mut App, key_event: KeyEvent) {
 // this lets us mutate the app state without having to pass a mutable reference and blocking the main ui/event thread or having to use a mutex
 // we simulate the refresh command by sending a key event to the event handler
 // the event handler has a mutable reference to the app and can mutate it
-pub fn initiate_auto_refresh(sender: mpsc::Sender<Event>) {
+pub fn initiate_auto_refresh(sender: mpsc::Sender<Event>, refresh_rate: usize) {
     tokio::spawn(async move {
         loop {
-            tokio::time::sleep(std::time::Duration::from_secs(60)).await; // TODO set via config file
+            tokio::time::sleep(std::time::Duration::from_secs(refresh_rate as u64)).await;
             // println!("sending refresh event");
             let _ = sender.send(Event::Key(KeyEvent::from(KeyCode::Char('r'))));
         }
