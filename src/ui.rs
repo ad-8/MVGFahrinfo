@@ -11,6 +11,7 @@ use crate::{
         self, static_widgets,
         station_list::{display_departures_table, get_suggested_station_list},
     },
+    config::Config,
     tui::Frame,
 };
 
@@ -66,16 +67,25 @@ pub fn render(app: &mut App, f: &mut Frame) {
     };
 
     //Status bar
+    let config = Config::parse(); // TODO pass config or add app.config field
 
     let app_mode_indicator: Vec<Span> = match app.app_mode {
         crate::app::AppMode::Normal => {
+            let last_refreshed = if config.display_seconds.unwrap_or_default() {
+                format!(
+                    "Last refreshed: {} ({} sec ago)",
+                    &app.last_refreshed, &app.seconds_since_last_refresh
+                )
+            } else {
+                format!("Last refreshed: {}", &app.last_refreshed)
+            };
+
             vec![
             Span::styled(format!(" NORMAL "), Style::default().bg(Color::Blue).bold()),
             Span::styled(
             format!(" Q: close app. Tab: switch tabs. Enter: select station. R: reload departures. S: search. "),
             Style::default()),
-            Span::styled(
-            format!("Last refreshed: {} ({} sec ago)", &app.last_refreshed, &app.seconds_since_last_refresh),
+            Span::styled(last_refreshed,
             Style::default().fg(Color::LightCyan))]
         }
         crate::app::AppMode::Search => {
@@ -142,9 +152,6 @@ pub fn render(app: &mut App, f: &mut Frame) {
 }
 
 fn draw_departures(f: &mut Frame<'_>, app: &mut App) {
-    
-
-
     let popup_title = match &app.selected_station {
         Some(station) => format!(" {} ", station.name),
         None => " No station selected ".to_string(),

@@ -6,6 +6,10 @@ pub struct Config {
     pub fav_station_idx: Option<usize>,
     /// list of directions to highlight departures to those directions
     pub fav_directions: Option<Vec<String>>,
+    /// make the display of seconds since last refresh optional (for performance reasons)
+    pub display_seconds: Option<bool>,
+    /// in seconds
+    pub refresh_rate: Option<usize>,
 }
 
 impl Config {
@@ -21,6 +25,8 @@ impl Config {
             Err(_) => Config {
                 fav_station_idx: None,
                 fav_directions: None,
+                display_seconds: None,
+                refresh_rate: None,
             },
         }
     }

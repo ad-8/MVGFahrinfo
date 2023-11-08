@@ -110,7 +110,7 @@ pub async fn update(app: &mut App, key_event: KeyEvent) {
 pub fn initiate_auto_refresh(sender: mpsc::Sender<Event>) {
     tokio::spawn(async move {
         loop {
-            tokio::time::sleep(std::time::Duration::from_secs(60)).await;
+            tokio::time::sleep(std::time::Duration::from_secs(60)).await; // TODO set via config file
             // println!("sending refresh event");
             let _ = sender.send(Event::Key(KeyEvent::from(KeyCode::Char('r'))));
         }
