@@ -37,15 +37,15 @@ async fn main() -> Result<()> {
 
     let mut app = App::new(config).await;
 
-    let rate = app.config.app_refresh_rate.unwrap_or(60);
-    initiate_auto_refresh(sender, rate);
+    let app_refresh_rate = app.config.app_refresh_rate.unwrap_or(60);
+    initiate_auto_refresh(sender, app_refresh_rate);
 
     app.scroll_state.select(app.config.fav_station);
     app.select_station().await;
     // current behavior: no highlighting until user starts scrolling; selecting new destination sets highlight to none
     // app.dep_tbl_state.select(Some(0));
     let display_seconds = app.config.display_seconds.unwrap_or_default();
-    let refresh_rate = app.config.display_seconds_refresh_rate.unwrap_or(10) as i64;
+    let seconds_refresh_rate = app.config.display_seconds_refresh_rate.unwrap_or(10) as i64;
 
     let mut tui = Tui::new(terminal, events);
     tui.enter()?;
@@ -60,7 +60,7 @@ async fn main() -> Result<()> {
         match tui.events.next()? {
             Event::Tick => {
                 if display_seconds {
-                    app.update_seconds_since_last_refresh(refresh_rate);
+                    app.update_seconds_since_last_refresh(seconds_refresh_rate);
                 } 
             } //every 250ms we get a tick event
             Event::Key(key_event) => update(&mut app, key_event).await,

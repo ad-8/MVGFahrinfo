@@ -33,11 +33,11 @@ impl Config {
                 c.unwrap()
             }
             Err(_) => Config {
-                app_refresh_rate: Some(60),
+                app_refresh_rate: None,
                 fav_station: None,
                 fav_directions: None,
                 display_seconds: None,
-                display_seconds_refresh_rate: Some(10),
+                display_seconds_refresh_rate: None,
                 transport: None,
             },
         }
