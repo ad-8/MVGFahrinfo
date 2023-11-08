@@ -7,9 +7,9 @@ use ratatui::{
 };
 
 use crate::{
-    api::{self, Station, DepartureInfo},
+    api::{self, DepartureInfo, Station},
     constants::{get_sbahn_color, get_ubahn_color},
-    App,
+    App, config::Config,
 };
 
 pub fn get_station_list_widget(app: &App) -> List {
@@ -81,7 +81,6 @@ fn get_product_icon_spans(products: &Vec<String>) -> Vec<Span> {
     spans
 }
 
-
 pub fn display_departures_table(departures: &[api::DepartureInfo]) -> Table {
     let header_cells = ["Vehicle", "Direction", "Platform", "ETA"]
         .iter()
@@ -95,13 +94,18 @@ pub fn display_departures_table(departures: &[api::DepartureInfo]) -> Table {
         .bottom_margin(1);
 
     let fav_color = Color::LightRed;
+    let config = Config::parse();//TODO pass from main
+    let departures: Vec<&DepartureInfo> = if let Some(transport_types) = config.transport {
+        departures.iter().filter(|d| transport_types.contains(&d.transport_type)).collect()
+    } else {
+        departures.iter().map(|d| d).collect() // DepartureInfo -> &DepartureInfo
+    };
 
     let rows = departures.iter().enumerate().map(|(index, item)| {
         let cells = if item.is_favorite() {
             vec![
                 Cell::from(get_vehicle_label(&item.label, &item.transport_type)),
-                Cell::from(format!("{}", item.destination))
-                    .style(Style::default().fg(fav_color)),
+                Cell::from(format!("{}", item.destination)).style(Style::default().fg(fav_color)),
                 Cell::from(get_platform_number(item.platform, index)),
                 Cell::from(format!("{} min", get_minutes(item.realtime_departure_time)))
                     .style(Style::default().fg(fav_color)),

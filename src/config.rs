@@ -10,6 +10,8 @@ pub struct Config {
     pub display_seconds: Option<bool>,
     /// in seconds
     pub refresh_rate: Option<usize>,
+    /// only display departures of certain transport types (options are BAHN, SBAHN, UBAHN, TRAM, BUS)
+    pub transport: Option<Vec<String>>,
 }
 
 impl Config {
@@ -27,6 +29,7 @@ impl Config {
                 fav_directions: None,
                 display_seconds: None,
                 refresh_rate: None,
+                transport: None,
             },
         }
     }
