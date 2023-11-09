@@ -61,7 +61,7 @@ async fn main() -> Result<()> {
             Event::Tick => {
                 if display_seconds {
                     app.update_seconds_since_last_refresh(seconds_refresh_rate);
-                } 
+                }
             } //every 250ms we get a tick event
             Event::Key(key_event) => update(&mut app, key_event).await,
         };

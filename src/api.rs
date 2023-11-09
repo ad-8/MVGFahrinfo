@@ -64,11 +64,15 @@ impl DepartureInfo {
     pub fn is_favorite(&self, config: &Config) -> bool {
         let mut favorites = &vec![];
         if let Some(f) = &config.fav_directions {
-           favorites = f;
+            favorites = f;
         };
 
         for fav in favorites {
-            if self.destination.to_lowercase().contains(&fav.to_lowercase()) {
+            if self
+                .destination
+                .to_lowercase()
+                .contains(&fav.to_lowercase())
+            {
                 return true;
             }
         }

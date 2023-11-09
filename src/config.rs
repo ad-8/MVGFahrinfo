@@ -20,7 +20,7 @@ pub struct Config {
 impl Config {
     /// If a `config.toml` exists, tries to parse the file,
     /// otherwise initializes all fields with [None].
-    /// 
+    ///
     /// Calls [std::process::exit()] if the config file is not valid [TOML](https://toml.io/en/).
     pub fn parse() -> Self {
         match std::fs::read_to_string(CONFIG_FILE) {

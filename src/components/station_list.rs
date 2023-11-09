@@ -8,8 +8,9 @@ use ratatui::{
 
 use crate::{
     api::{self, DepartureInfo, Station},
+    config::Config,
     constants::{get_sbahn_color, get_ubahn_color},
-    App, config::Config,
+    App,
 };
 
 pub fn get_station_list_widget(app: &App) -> List {
@@ -81,7 +82,10 @@ fn get_product_icon_spans(products: &Vec<String>) -> Vec<Span> {
     spans
 }
 
-pub fn display_departures_table<'a>(departures: &'a [api::DepartureInfo], config: &'a Config) -> Table<'a> {
+pub fn display_departures_table<'a>(
+    departures: &'a [api::DepartureInfo],
+    config: &'a Config,
+) -> Table<'a> {
     let header_cells = ["Vehicle", "Direction", "Platform", "ETA"]
         .iter()
         .map(|h| Cell::from(*h).style(Style::default().fg(Color::Gray)));

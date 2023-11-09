@@ -157,7 +157,10 @@ impl App {
         }
     }
 
-    fn optionally_filter_by_transport_type(&mut self, departures: Vec<DepartureInfo>) -> Vec<DepartureInfo> {
+    fn optionally_filter_by_transport_type(
+        &mut self,
+        departures: Vec<DepartureInfo>,
+    ) -> Vec<DepartureInfo> {
         if let Some(transport_types) = &self.config.transport {
             departures
                 .iter()
