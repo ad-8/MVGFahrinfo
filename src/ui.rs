@@ -11,7 +11,6 @@ use crate::{
         self, static_widgets,
         station_list::{display_departures_table, get_suggested_station_list},
     },
-    config::Config,
     tui::Frame,
 };
 

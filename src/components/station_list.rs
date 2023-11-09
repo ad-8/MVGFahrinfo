@@ -7,7 +7,7 @@ use ratatui::{
 };
 
 use crate::{
-    api::{self, DepartureInfo, Station},
+    api::{self, Station},
     config::Config,
     constants::{get_sbahn_color, get_ubahn_color},
     App,
