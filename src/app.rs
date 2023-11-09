@@ -1,7 +1,10 @@
 use chrono::{DateTime, Local};
 use ratatui::widgets::{ListState, TableState};
 
-use crate::{api::{self, DepartureInfo}, config::Config};
+use crate::{
+    api::{self, DepartureInfo},
+    config::Config,
+};
 
 #[derive(PartialEq)] // need this to do binary comparison
 pub enum AppTabs {
@@ -138,28 +141,31 @@ impl App {
     }
 
     pub async fn update_departures(&mut self) {
+        let Some(station) = &self.selected_station else {
+            return;
+        };
 
-        if let Some(station) = &self.selected_station {
-            self.departures = match api::get_departures(&station.id).await {
-                Ok(departures) => {
-                    let departures: Vec<DepartureInfo> =
-                        if let Some(transport_types) = &self.config.transport {
-                            departures
-                                .iter()
-                                .filter(|d| transport_types.contains(&d.transport_type))
-                                .cloned()
-                                .collect()
-                        } else {
-                            departures
-                        };
-                    self.update_last_refreshed();
-                    departures
-                }
-                Err(_e) => {
-                    // println!("Error fetching departures {}", e);
-                    vec![]
-                }
+        self.departures = match api::get_departures(&station.id).await {
+            Ok(departures) => {
+                self.update_last_refreshed();
+                self.optionally_filter_by_transport_type(departures)
             }
+            Err(_e) => {
+                // println!("Error fetching departures {}", e);
+                vec![]
+            }
+        }
+    }
+
+    fn optionally_filter_by_transport_type(&mut self, departures: Vec<DepartureInfo>) -> Vec<DepartureInfo> {
+        if let Some(transport_types) = &self.config.transport {
+            departures
+                .iter()
+                .filter(|d| transport_types.contains(&d.transport_type))
+                .cloned()
+                .collect()
+        } else {
+            departures
         }
     }
 
