@@ -143,7 +143,7 @@ impl App {
             self.departures = match api::get_departures(&station.id).await {
                 Ok(departures) => {
                     let departures: Vec<DepartureInfo> =
-                        if let Some(transport_types) = self.config.transport.clone() {
+                        if let Some(transport_types) = &self.config.transport {
                             departures
                                 .iter()
                                 .filter(|d| transport_types.contains(&d.transport_type))
